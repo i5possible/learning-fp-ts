@@ -1,0 +1,34 @@
+{
+  "name": "learning-fp-ts",
+  "version": "1.0.0",
+  "description": "Learning fp-ts resources",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/i5possible/learning-fp-ts.git"
+  },
+  "keywords": [
+    "fp-ts",
+    "functional",
+    "programming",
+    "typescript"
+  ],
+  "author": "Liang Hong",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/i5possible/learning-fp-ts/issues"
+  },
+  "homepage": "https://github.com/i5possible/learning-fp-ts#readme",
+  "dependencies": {
+    "@types/node": "^16.7.13",
+    "fp-ts": "^2.11.1",
+    "fp-ts-contrib": "^0.1.26",
+    "io-ts": "^2.2.16",
+    "io-ts-types": "^0.5.16",
+    "ts-node": "^10.2.1",
+    "typescript": "^4.4.2"
+  }
+}
