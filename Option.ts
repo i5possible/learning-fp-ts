@@ -14,6 +14,7 @@ O.map((str: string) => str.length)(none);
 O.chain((num: number) => O.some(num + 1))(someNumber);
 O.chain((num: number) => O.none)(someNumber);
 O.chain((num: number) => O.none)(none);
+O.filter((str: string) => str.length > 3)(someString);
 
 // De-constructor
 O.fold(
@@ -54,6 +55,18 @@ const getUserName = (user: User): string =>
     O.fold(
       () => "Unknown User",
       (name: string) => name
+    )
+  );
+
+const doubleOdd = (data: number): string =>
+  pipe(
+    data,
+    O.fromNullable,
+    O.filter((x) => x % 2 === 1),
+    O.map((x) => x * 2),
+    O.fold(
+      () => "It's not a odd number",
+      (value) => `The result is ${value}`
     )
   );
 
