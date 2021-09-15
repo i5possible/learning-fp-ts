@@ -111,8 +111,10 @@ console.log(
 // Tasks
 // Implement a Validation that can return all of the errors
 type UUID = string;
-type Maybe<T> = T | undefined | null; 
-declare const validateUUIDAll = (
+type Maybe<T> = T | undefined | null;
+
+// It could be like:
+declare function validateUUIDAll(
   uuid: Maybe<UUID>,
   uuidValidationFn: UuidValidationFn
 ): E.Either<NEA.NonEmptyArray<string>, string>;
