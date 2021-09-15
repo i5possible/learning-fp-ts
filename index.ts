@@ -6,7 +6,6 @@ import * as A from "fp-ts/Array";
 import * as NEA from "fp-ts/NonEmptyArray";
 import { flow, pipe } from "fp-ts/function";
 import Do from "fp-ts-contrib/Do";
-import { string } from "yargs";
 
 // Option
 const doubleOdd = (data: number): string =>
@@ -23,76 +22,6 @@ const doubleOdd = (data: number): string =>
 
 console.log(doubleOdd(3));
 console.log(doubleOdd(8));
-
-// Either
-// input: one of [ "e708f630-f41c-461b-a1f9-11095f9adafe", undefined, null, "e708f630-f41c-461b-a1f9-11095f9adaf", "e708f630f41c--461b-a1f9-11095f9adaf", ""e708f630-f41c-461b-a1f9-11095f9adaF"]
-// invalid input: null, undefined
-// length: 32
-// structure: 8-4-4-4-12
-// character: [a-z0-9]
-
-const uuidLengthValidation = (uuid: string) =>
-  E.fromPredicate(
-    (input: string) => input.length === 32,
-    () => "The input length is not 32"
-  )(uuid);
-const uuidStructureValidation = (uuid: string) =>
-  E.right<string, string>("e708f630-f41c-461b-a1f9-11095f9adafe");
-const uuidCharacterValidation = (uuid: string) =>
-  E.left<string, string>("Not valid character");
-
-const validateUUID = (uuid: string | undefined | null): string =>
-  pipe(
-    O.fromNullable(uuid),
-    E.fromOption(() => "The input is not present!"),
-    E.chain(uuidLengthValidation),
-    E.chain(uuidStructureValidation),
-    E.chain(uuidCharacterValidation),
-    E.fold(
-      (left) => left,
-      (right) => `The uuid is ${right}`
-    )
-  );
-
-type UuidValidationFn = (uuid: string) => E.Either<string, string>;
-
-const composedValidation = (validationFunctions: Array<UuidValidationFn>): UuidValidationFn => 
-  pipe(
-    validationFunctions,
-    A.foldLeft(
-      () => (input: string) => E.of(input), 
-      (acc: UuidValidationFn, tail: UuidValidationFn[]) => flow(
-        acc,
-        E.chain(composedValidation(tail)
-      )
-    )
-  );
-
-
-const validationFunction = composedValidation([
-  uuidLengthValidation, 
-  uuidStructureValidation, 
-  uuidCharacterValidation
-]);
-  
-
-const validateUUID = (uuid: string | undefined | null, validationFunction: UuidValidationFn): string =>
-  pipe(
-    O.fromNullable(uuid),
-    E.fromOption(() => "The input is not present!"),
-    E.chain(validationFunction),
-    // E.chain(uuidLengthValidation),
-    // E.chain(uuidStructureValidation),
-    // E.chain(uuidCharacterValidation),
-    E.fold(
-      (left) => left,
-      (right) => `The uuid is ${right}`
-    )
-  );
-
-
-console.log(validateUUID(undefined));
-console.log(validateUUID("e708f630-f41c-461b-a1f9-11095f9adafe"));
 
 // Task for Either
 type Form = any;
