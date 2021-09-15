@@ -1,4 +1,4 @@
-import { A, E, O, pipe, flow, J } from "./lib";
+import { A, E, O, NEA, pipe, flow, J } from "./lib";
 
 // Constructors
 const foo = E.right("foo");
@@ -37,6 +37,12 @@ E.isLeft(foo);
 E.isRight(right);
 
 // Examples: Fail fast validation
+// Either
+// input: one of [ "e708f630-f41c-461b-a1f9-11095f9adafe", undefined, null, "e708f630-f41c-461b-a1f9-11095f9adaf", "e708f630f41c--461b-a1f9-11095f9adaf", ""e708f630-f41c-461b-a1f9-11095f9adaF"]
+// invalid input: null, undefined
+// length: 32
+// structure: 8-4-4-4-12
+// character: [a-z0-9]
 
 const uuidLengthValidation = (uuid: string) =>
   E.fromPredicate(
@@ -49,18 +55,18 @@ const uuidCharacterValidation = (uuid: string) =>
   E.left<string, string>("Not valid character");
 
 // Use chain to do the validate
-// const validateUUID = (uuid: string | undefined | null): string =>
-//   pipe(
-//     O.fromNullable(uuid),
-//     E.fromOption(() => "The input is not present!"),
-//     E.chain(uuidLengthValidation),
-//     E.chain(uuidStructureValidation),
-//     E.chain(uuidCharacterValidation),
-//     E.fold(
-//       (left) => left,
-//       (right) => `The uuid is ${right}`
-//     )
-//   );
+const validateUUIDv1 = (uuid: string | undefined | null): string =>
+  pipe(
+    O.fromNullable(uuid),
+    E.fromOption(() => "The input is not present!"),
+    E.chain(uuidLengthValidation),
+    E.chain(uuidStructureValidation),
+    E.chain(uuidCharacterValidation),
+    E.fold(
+      (left) => left,
+      (right) => `The uuid is ${right}`
+    )
+  );
 
 // If you want to make the validation extensible
 
@@ -102,4 +108,11 @@ console.log(
   validateUUID("e708f630-f41c-461b-a1f9-11095f9adafe", uuidValidationFn)
 );
 
+// Tasks
 // Implement a Validation that can return all of the errors
+type UUID = string;
+type Maybe<T> = T | undefined | null; 
+declare const validateUUIDAll = (
+  uuid: Maybe<UUID>,
+  uuidValidationFn: UuidValidationFn
+): E.Either<NEA.NonEmptyArray<string>, string>;
