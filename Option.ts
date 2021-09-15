@@ -1,22 +1,23 @@
 import * as O from "fp-ts/Option";
 import { pipe } from "fp-ts/function";
 
-// Constructor
+// Constructors
 const someString = O.of("value");
 const someNumber = O.some(1);
 const none = O.none;
 const fromNullableNone = O.fromNullable(null); // O.none
 const fromNullableSome = O.fromNullable("string"); // O.some("string")
 
-// Transform
+// Transformers
 O.map((str: string) => str.length)(someString);
 O.map((str: string) => str.length)(none);
 O.chain((num: number) => O.some(num + 1))(someNumber);
 O.chain((num: number) => O.none)(someNumber);
 O.chain((num: number) => O.none)(none);
 O.filter((str: string) => str.length > 3)(someString);
+O.filterMap((x: number) => (x % 2 === 0 ? O.some(x * 2) : O.none))(O.some(1));
 
-// De-constructor
+// De-constructors
 O.fold(
   () => "",
   (str) => str
