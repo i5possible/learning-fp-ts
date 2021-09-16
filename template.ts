@@ -1,4 +1,4 @@
-import { E, O, pipe } from "lib";
+import { E, O, pipe } from "./lib";
 
 // Constructors
 
