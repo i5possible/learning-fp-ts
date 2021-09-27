@@ -50,10 +50,13 @@ const uuidLengthValidation = (uuid: string) =>
     (input: string) => input.length === 32,
     () => 'The input length is not 32'
   )(uuid)
+// need implement this function
+// E.left<string, string>('The structure should be like ********-****-****-****-************')
 const uuidStructureValidation = (uuid: string) =>
   E.right<string, string>('e708f630-f41c-461b-a1f9-11095f9adafe')
+// need implement this function
 const uuidCharacterValidation = (uuid: string) =>
-  E.left<string, string>('Not valid character')
+  E.left<string, string>('The character should be digital or [a-f]')
 
 // Use chain to do the validate
 export const validateUUIDv1 = (uuid: string | undefined | null): string =>
@@ -83,7 +86,7 @@ const composedValidation = (
     )
   )
 
-const uuidValidationFn = composedValidation([
+export const uuidValidationFn = composedValidation([
   uuidLengthValidation,
   uuidStructureValidation,
   uuidCharacterValidation,
@@ -114,7 +117,7 @@ type UUID = string
 type Maybe<T> = T | undefined | null
 
 // It could be like:
-declare function validateUUIDAll(
+export declare function validateUUIDAll(
   uuid: Maybe<UUID>,
   uuidValidationFn: UuidValidationFn
 ): E.Either<NEA.NonEmptyArray<string>, string>
