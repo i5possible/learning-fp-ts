@@ -56,7 +56,7 @@ const uuidCharacterValidation = (uuid: string) =>
   E.left<string, string>('Not valid character')
 
 // Use chain to do the validate
-const validateUUIDv1 = (uuid: string | undefined | null): string =>
+export const validateUUIDv1 = (uuid: string | undefined | null): string =>
   pipe(
     O.fromNullable(uuid),
     E.fromOption(() => 'The input is not present!'),
@@ -70,7 +70,6 @@ const validateUUIDv1 = (uuid: string | undefined | null): string =>
   )
 
 // If you want to make the validation extensible
-
 type UuidValidationFn = (uuid: string) => E.Either<string, string>
 const composedValidation = (
   validationFunctions: Array<UuidValidationFn>
@@ -90,7 +89,7 @@ const uuidValidationFn = composedValidation([
   uuidCharacterValidation,
 ])
 
-const validateUUID = (
+export const validateUUID = (
   uuid: string | undefined | null,
   uuidValidationFn: UuidValidationFn
 ): string =>
@@ -119,6 +118,3 @@ declare function validateUUIDAll(
   uuid: Maybe<UUID>,
   uuidValidationFn: UuidValidationFn
 ): E.Either<NEA.NonEmptyArray<string>, string>
-type LiftedUuidValidationFn = (
-  uuid: string
-) => E.Either<NEA.NonEmptyArray<string>, string>
