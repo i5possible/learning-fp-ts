@@ -1,5 +1,4 @@
-import { sequenceT } from 'fp-ts/lib/Apply'
-import { A, E, O, NEA, pipe, flow, J } from './lib'
+import { A, E, O, NEA, pipe, flow, J, sequenceT } from './lib'
 
 // Constructors
 const foo = E.right('foo')
@@ -121,3 +120,36 @@ export declare function validateUUIDAll(
   uuid: Maybe<UUID>,
   uuidValidationFn: UuidValidationFn
 ): E.Either<NEA.NonEmptyArray<string>, string>
+
+type LiftedUuidValidationFn = (
+  uuid: string
+) => E.Either<NEA.NonEmptyArray<string>, string>
+
+const liftUuidValidation =
+  (validation: UuidValidationFn): LiftedUuidValidationFn =>
+  (uuid: string) =>
+    pipe(
+      validation(uuid),
+      E.mapLeft((error) => [error])
+    )
+
+const uuidValidationsFn = (
+  uuid: string
+): E.Either<NEA.NonEmptyArray<string>, string> =>
+  pipe(
+    sequenceT(E.getApplicativeValidation(NEA.getSemigroup<string>()))(
+      liftUuidValidation(uuidLengthValidation)(uuid),
+      liftUuidValidation(uuidStructureValidation)(uuid),
+      liftUuidValidation(uuidCharacterValidation)(uuid)
+    ),
+    E.map(() => uuid)
+  )
+
+const validateUUIDAllUseNEA = (
+  uuid: string
+): E.Either<NEA.NonEmptyArray<string>, string> =>
+  pipe(
+    O.fromNullable(uuid),
+    E.fromOption(() => NEA.of('The input is not present!')),
+    E.chain(uuidValidationsFn)
+  )
