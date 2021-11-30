@@ -36,17 +36,37 @@ describe("TaskEither", () => {
     });
   });
 
-  describe.skip("getItemsByListId", () => {
+  describe("getItemsByListId", () => {
     it("should return all items", async () => {
       const result = await pipe(
         fetchItemsByListId(1),
         TE.getOrElseW((error) => T.of(error))
       )();
 
-      expect(result).toEqual("Item does not exist!");
+      expect(result).toEqual([
+        {
+          id: 2,
+          description: "Some description about this item2",
+          name: "secondItem",
+        },
+        {
+          id: 3,
+          description: "Some description about this item3",
+          name: "itemThree",
+        },
+      ]);
     });
 
-    it("should return error", async () => {
+    it("should return list missing error", async () => {
+      const result = await pipe(
+        fetchItemsByListId(4),
+        TE.getOrElseW((error) => T.of(error))
+      )();
+
+      expect(result).toEqual("List is missing!");
+    });
+
+    it("should return item missing error", async () => {
       const result = await pipe(
         fetchItemsByListId(2),
         TE.getOrElseW((error) => T.of(error))

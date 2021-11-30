@@ -1,5 +1,6 @@
 import { string } from "fp-ts";
-import { E, pipe, T, TE, A, O } from "./lib";
+import { list } from "fp-ts-contrib/lib/List";
+import { E, pipe, T, TE, A, O, RA } from "./lib";
 
 // Constructors
 const taskTE = TE.of("task");
@@ -52,7 +53,7 @@ type ItemDetailById = (itemId: number) => TE.TaskEither<string, Item>;
 const itemNames = [
   { id: 1, name: "firstItem" },
   { id: 2, name: "secondItem" },
-  { id: 2, name: "itemThree" },
+  { id: 3, name: "itemThree" },
 ];
 
 const itemDetails: Item[] = [
@@ -102,8 +103,48 @@ export const fetchItemByName = fetchItem(
 
 // Tasks
 // implement the following two functions
-type itemIdsByListId = (listId: number) => number[];
+type ItemIdsByListId = (listId: number) => TE.TaskEither<string, number[]>;
+type listsType = { id: number; itemIds: number[] }[];
 
-export declare function fetchItemsByListId(
+const lists: listsType = [
+  { id: 1, itemIds: [2, 3] },
+  { id: 2, itemIds: [1, 3] },
+  { id: 3, itemIds: [2, 4] },
+];
+
+// export declare function fetchItemIdsByListId(
+//   listId: number
+// ): TE.TaskEither<string, number[]>;
+
+// export declare function fetchItemsByListId(
+//   listId: number
+// ): TE.TaskEither<string, Item[]>;
+
+export const fetchItemIdsByListId = (
   listId: number
-): TE.TaskEither<string, Item[]>;
+): TE.TaskEither<string, number[]> =>
+  pipe(
+    lists,
+    A.findFirst((entry) => entry.id === listId),
+    O.map((entry) => entry.itemIds),
+    E.fromOption(() => "List is missing!"),
+    TE.fromEither
+  );
+
+const fetchItems =
+  (
+    fetchItemDetailById: ItemDetailById,
+    fetchItemIdsByListId: ItemIdsByListId
+  ) =>
+  (listId: number): TE.TaskEither<string, Item[]> =>
+    pipe(
+      listId,
+      fetchItemIdsByListId,
+      TE.chain(TE.traverseArray(fetchItemDetailById)),
+      TE.map(RA.toArray)
+    );
+
+export const fetchItemsByListId = fetchItems(
+  fetchItemDetailById,
+  fetchItemIdsByListId
+);
