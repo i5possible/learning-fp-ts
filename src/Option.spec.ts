@@ -92,7 +92,7 @@ describe("getUserName", () => {
 });
 
 // remove the '.skip' to run this test suite when the function is implemented
-describe.skip("getUserStreet1", () => {
+describe("getUserStreet1", () => {
   it("should return user street1", () => {
     expect(getUserStreet1(userWithAddressAndStreet1)).toEqual(
       O.some("some street1")
@@ -108,7 +108,7 @@ describe.skip("getUserStreet1", () => {
 });
 
 // remove the '.skip' to run this test suite when the function is implemented
-describe.skip("getUserFullAddress", () => {
+describe("getUserFullAddress", () => {
   it("should return the full address", () => {
     expect(getUserFullAddress(userWithEverything)).toEqual(
       "some street1, some street2, some city, some province"

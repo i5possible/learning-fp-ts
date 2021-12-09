@@ -1,4 +1,5 @@
-import { O, pipe } from "./lib";
+import { identity } from "fp-ts/lib/function";
+import { O, A, pipe } from "./lib";
 
 // Constructors
 const someString = O.of("value");
@@ -70,5 +71,30 @@ export const getUserName = (user: User): string =>
   );
 
 // Tasks: implement the following functions and pass the tests in Option.spec.ts
-export declare function getUserStreet1(user: User): O.Option<string>;
-export declare function getUserFullAddress(user: User): string;
+// export declare function getUserStreet1(user: User): O.Option<string>;
+export const getUserStreet1 = (user: User): O.Option<string> =>
+  pipe(
+    O.fromNullable(user),
+    O.chain((user) => user.profile),
+    O.chain((profile) => profile.address),
+    O.chain((address) => address.street1)
+  );
+// export declare function getUserFullAddress(user: User): string;
+const getFullAddress = (address: Address): string =>
+  A.compact([
+    address.street1,
+    address.street2,
+    O.of(address.city),
+    O.of(address.province),
+  ]).join(", ");
+
+export const getUserFullAddress = (user: User): string =>
+  pipe(
+    O.fromNullable(user),
+    O.chain((user) => user.profile),
+    O.chain((profile) => profile.address),
+    O.fold(
+      () => "",
+      (address: Address) => getFullAddress(address)
+    )
+  );
